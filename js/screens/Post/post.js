@@ -1,21 +1,29 @@
 import React, { useEffect, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
-import { Container, ItemSeparator, ListEmpty } from '../../components';
+import { Container, ItemSeparator, ListEmpty, Loading } from '../../components';
 import { GET } from '../../utils';
 
 const Post = props => {
   const [post, setPost] = useState({});
+  const [isFetchingPost, setIsFetchingPost] = useState(true);
+  const [isFetchingComment, setIsFetchingComment] = useState(true);
   const [comments, setComments] = useState([]);
 
   const { params = {} } = props.navigation.state;
 
   useEffect(() => {
     function fetchPost() {
-      GET(`posts/${params.id}`).then(data => setPost(data));
+      GET(`posts/${params.id}`).then(data => {
+        setPost(data);
+        setIsFetchingPost(false);
+      });
     }
     function fetchComments() {
-      GET(`posts/${params.id}/comments`).then(data => setComments(data));
+      GET(`posts/${params.id}/comments`).then(data => {
+        setComments(data);
+        setIsFetchingComment(false);
+      });
     }
     fetchPost();
     fetchComments();
@@ -43,12 +51,12 @@ const Post = props => {
   return (
     <Container padder>
       <FlatList
-        ListHeaderComponent={listHeader}
+        ListHeaderComponent={isFetchingPost ? <Loading /> : listHeader}
         data={comments}
         renderItem={renderItem}
         initialNumToRender={10}
         keyExtractor={item => `${item.id}`}
-        ListEmptyComponent={<ListEmpty />}
+        ListEmptyComponent={isFetchingComment ? <Loading /> : <ListEmpty />}
         ItemSeparatorComponent={() => <ItemSeparator />}
       />
     </Container>

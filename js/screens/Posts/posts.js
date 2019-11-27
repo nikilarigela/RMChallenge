@@ -4,15 +4,19 @@ import {
   FlatList,
   TouchableNativeFeedback,
 } from 'react-native-gesture-handler';
-import { Container, ItemSeparator, ListEmpty } from '../../components';
+import { Container, ItemSeparator, ListEmpty, Loading } from '../../components';
 import { GET } from '../../utils';
 
 const Posts = props => {
   const [posts, setPosts] = useState([]);
+  const [isFetching, setIsFetching] = useState(true);
 
   useEffect(() => {
     function fetchData() {
-      GET('posts').then(data => setPosts(data));
+      GET('posts').then(data => {
+        setPosts(data);
+        setIsFetching(false);
+      });
     }
     fetchData();
   }, [posts]);
@@ -28,13 +32,18 @@ const Posts = props => {
 
   return (
     <Container padder>
-      <FlatList
-        data={posts}
-        renderItem={renderItem}
-        keyExtractor={item => `${item.id}`}
-        ListEmptyComponent={<ListEmpty />}
-        ItemSeparatorComponent={() => <ItemSeparator />}
-      />
+      {isFetching ? (
+        <Loading />
+      ) : (
+        <FlatList
+          data={posts}
+          renderItem={renderItem}
+          initialNumToRender={10}
+          keyExtractor={item => `${item.id}`}
+          ListEmptyComponent={<ListEmpty />}
+          ItemSeparatorComponent={() => <ItemSeparator />}
+        />
+      )}
     </Container>
   );
 };
