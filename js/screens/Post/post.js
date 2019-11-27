@@ -14,16 +14,20 @@ const Post = props => {
 
   useEffect(() => {
     function fetchPost() {
-      GET(`posts/${params.id}`).then(data => {
-        setPost(data);
-        setIsFetchingPost(false);
-      });
+      GET(`posts/${params.id}`)
+        .then(data => {
+          setPost(data);
+          setIsFetchingPost(false);
+        })
+        .catch(e => setIsFetchingPost(false));
     }
     function fetchComments() {
-      GET(`posts/${params.id}/comments`).then(data => {
-        setComments(data);
-        setIsFetchingComment(false);
-      });
+      GET(`posts/${params.id}/comments`)
+        .then(data => {
+          setComments(data);
+          setIsFetchingComment(false);
+        })
+        .catch(e => setIsFetchingComment(false));
     }
     fetchPost();
     fetchComments();

@@ -13,10 +13,14 @@ const Posts = props => {
 
   useEffect(() => {
     function fetchData() {
-      GET('posts').then(data => {
-        setPosts(data);
-        setIsFetching(false);
-      });
+      GET('posts')
+        .then(data => {
+          setPosts(data);
+          setIsFetching(false);
+        })
+        .catch(e => {
+          setIsFetching(false);
+        });
     }
     fetchData();
   }, [posts]);
